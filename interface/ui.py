@@ -3,7 +3,7 @@ Created on 25 mar 2013
 
 @author: Expert
 '''
-from model import Game_301
+from model import gameX01
 from model.player import Player
 from tkinter import Tk, StringVar
 from tkinter.constants import BOTH, TOP, LEFT
@@ -22,7 +22,7 @@ class SettingsUI:
         """Build a connection string from a dictionary of parameters.
     
         Returns string."""
-        return "     ".join(["%s" % player.name for player in self.playerList])
+        return "Players: " + ", ".join(["%s" % player.name for player in self.playerList])
     
     def addPlayer(self, name):
         self.playerList.append(Player(name))
@@ -32,9 +32,10 @@ class SettingsUI:
         
         # styles
         style = Style()
-        style.configure("TR.TLabel", background="#ACF059")
+        style.configure("GRN.TLabel", background="#ACF059")
         style.configure("GRN.TFrame", background="#ACF059")
         style.configure("BLK.TFrame", background="black")
+        
         
         # create top frame
         topFrame = Frame(mainFrame, style="GRN.TFrame", padding=8)
@@ -64,12 +65,22 @@ class SettingsUI:
 
         # create start game button
         startGameButton = Button(mainFrame, text="Start")
+        
         def startGame(event):
-            "TODO: Starts selected game"
-            mainFrame.pack_forget()
-            gameFrame = Frame(root)
-            gameFrame.pack(fill=BOTH, expand=1)
-            Game_301.Game301(gameFrame, self.playerList)
+            if self.playerList:
+                mainFrame.pack_forget()
+                gameFrame = Frame(root)
+                gameFrame.pack(fill=BOTH, expand=1)
+                
+                game = currentGame.get()
+                if game == "301":
+                    gameX01.GameX01(gameFrame, self.playerList)
+                elif game == "501":                    
+                    gameX01.GameX01(gameFrame, self.playerList, 501)
+                else:
+                    gameX01.GameX01(gameFrame, self.playerList)
+        
+
         
         startGameButton.bind("<Button-1>", startGame)
         startGameButton.pack(side=TOP)
@@ -77,7 +88,7 @@ class SettingsUI:
         # create label and set text
         playerString = StringVar()
         playerString.set(self.buildPlayerHeaderString())
-        headerLabel = Label(topFrame, textvariable=playerString, style="TR.TLabel")
+        headerLabel = Label(topFrame, textvariable=playerString, style="GRN.TLabel")
         headerLabel.pack(side=TOP)
         
         #bind add player events
@@ -94,8 +105,10 @@ class SettingsUI:
     
     
 if __name__ == "__main__":
-            # window size
+    
+    # window size
     root = Tk()
+    root.title("Dart Score")
     root.geometry("400x250")
     mainFrame = Frame(root)
     mainFrame.pack(fill=BOTH)
