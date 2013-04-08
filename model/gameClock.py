@@ -1,16 +1,15 @@
 '''
-Created on 28 mar 2013
+Created on 6 apr 2013
 
-@author: Expert
+@author: Filip
 '''
 from model.game import Game
 
-
-class GameX01(Game):
+class GameClock(Game):
     '''
-    Represents a game of 301
-    '''   
-    
+    Represents a game of Clock
+    '''
+
     def playerDone(self, event):
         """Sets the score for the player and 
         handles what happens when a player is done with his turn"""
@@ -19,29 +18,26 @@ class GameX01(Game):
             self.handleScore(self.currentPlayer, int(self.scoreVar.get()))
             self.addScoreRow(self.currentPlayer)
             
-            winner = self.goalCheck()
-            if winner:
-                self.victory(winner)
-            else:
-                newRound = not self.nextPlayer()
-                if newRound:
-                    self.addRoundRow(self.currentRound)
+            newRound = not self.nextPlayer()
+            if newRound:
+                winner = self.goalCheck()
+                if winner:
+                    self.victory(winner)
+                self.addRoundRow(self.currentRound)
         except ValueError:
             return
     
     def goalCheck(self):
         "Check if the game is won by any player"
-        for player in self.playerList:
-            if player.score == 0:
-                return player
+        if self.currentRound == 21:
+            maxScore = max([player.score for player in self.playerList])
+            winner = self.playerList.index(maxScore) 
+            return winner
         return None
     
     def handleScore(self, player, score):
-        "Calculates the current total score for player, score is the score for last turn"
-        if player.score - score == 0:
-            player.score -= score
-        elif player.score - score > 0:    
-            player.score -= score
+        "Calculates the current total score for player, score is the score for last turn"    
+        player.score += score
             
     def victory(self, player):
         "handles post-game, player won the game"
@@ -55,15 +51,12 @@ class GameX01(Game):
         for player in self.playerList:
             self.addScoreRow(player, (self.styleWhiteFrame, self.styleWhiteLabel))
         self.addRoundRow(self.currentRound)
-        
-        
-        
-    def __init__(self, gameFrame, playerList, startScore=301):
+    
+
+    def __init__(self, gameFrame, playerList, startScore=0):
         '''
-        Sets up the interface and variables for a game of 301
+        Constructor
         '''
         Game.__init__(self, gameFrame, playerList)
         self.startScore = startScore
         self.startNewGame()
-        
-        
